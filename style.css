@@ -1,0 +1,46 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+h1 {
+    font-size: 80px;
+}
+
+.accordion {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+.accordion-item {
+border-bottom: 1px solid #ccc;
+}
+
+.accordion-item:last-child {
+border-bottom: none;
+}
+
+.accordion-title {
+padding: 15px;
+cursor: pointer;
+font-weight: bold;
+transition: background-color 0.3s;
+}
+
+.accordion-title:hover {
+background-color: #e0e0e0;
+}
+
+.accordion-content {
+display: none; /* Hidden by default */
+padding: 15px;
+background-color: #fff;
+border-top: 1px solid #eee;
+}
+
+.accordion-title.active {
+background-color: #d0d0d0;
+}
