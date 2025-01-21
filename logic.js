@@ -80,7 +80,6 @@
               }
             });
   
-            // Expand the clicked item
             if (!isActive) {
               title.classList.add('active');
               content.style.display = 'block';
@@ -99,10 +98,8 @@
           async (position) => {
             const { latitude, longitude } = position.coords;
 
-            // Step 1: Display Geolocation
             debugLocation.textContent = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`;
 
-            // Step 2: Call Reverse Geocoding API
             try {
               const reverseGeocodeUrl = `${API_BASE_URL}/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
               const response = await fetch(reverseGeocodeUrl);
@@ -225,6 +222,13 @@
     }
 
     async function fetchPlaceFromCoordinates(latitude, longitude) {
+      const cachedPlace = localStorage.getItem('userPlace');
+
+      if (cachedPlace) {
+        console.log('Using cached geolocation data:', cachedPlace);
+        return cachedPlace; // Return cached result
+      }
+      
       const reverseGeocodeUrl = `${API_BASE_URL}/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
       
       try {
