@@ -1,8 +1,7 @@
 (() => {
     // Configuration Variables
-    const weatherApiKey = '72158c63b0d80262b14f51bd18ff35b4';
-    const moonApiKey = 'ee32e56ea8msh96ef747a836ed81p1551d2jsn723b863c85ca';
-    const moonPhaseUrl = 'https://moon-phase.p.rapidapi.com/advanced';
+    const weatherProxyUrl = 'https://weather-moon-api.onrender.com/api/weather';
+    const moonPhaseProxyUrl = 'https://weather-moon-api.onrender.com/api/moon-phase';
     const urls = [
       'https://www.google.com',
       'https://www.youtube.com',
@@ -99,7 +98,12 @@
             const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${weatherApiKey}&units=imperial`;
   
             fetch(weatherUrl)
-              .then((response) => response.json())
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`Weather API Error: ${response.status}`);
+              }
+              return response.json();
+            })
               .then((data) => {
                 const weatherWidget = document.getElementById('weather-widget');
                 const location = data.name;
@@ -140,37 +144,29 @@
   
     // Fetch Moon Phase Data
     function fetchMoonPhase() {
-      fetch(moonPhaseUrl, {
-        method: 'GET',
-        headers: {
-          'Accept': '*/*',
-          'X-Rapidapi-Key': moonApiKey,
-          'X-RapidAPI-Host': 'moon-phase.p.rapidapi.com',
-        },
+      fetch(moonPhaseProxyUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Moon Phase API Error: ${response.status}`);
+        }
+        return response.json();
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Moon Phase API Error: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log('Moon Phase API Response:', data);
-          const moonPhaseWidget = document.getElementById('moon-phase-widget');
-          const ageDays = data.moon.age_days;
-          const phaseName = data.moon.phase_name;
-          const zodiac = data.moon.zodiac.moon_sign;
-          const emoji = data.moon.emoji;
-  
-          moonPhaseWidget.innerHTML = `
-            <div class="weather-icon">${emoji}</div>
-            <div class="weather-widget">
-              <div class="weather-location">Age days: ${ageDays}</div>
-              <div class="weather-temp">Phase: ${phaseName}</div>
-              <div class="weather-condition">Zodiac: ${zodiac}</div>
-            </div>
-          `;
-        })
+      .then((data) => {
+        const moonPhaseWidget = document.getElementById('moon-phase-widget');
+        const ageDays = data.moon.age_days;
+        const phaseName = data.moon.phase_name;
+        const zodiac = data.moon.zodiac.moon_sign;
+        const emoji = data.moon.emoji;
+
+        moonPhaseWidget.innerHTML = `
+          <div class="weather-icon">${emoji}</div>
+          <div class="weather-widget">
+            <div class="weather-location">Age days: ${ageDays}</div>
+            <div class="weather-temp">Phase: ${phaseName}</div>
+            <div class="weather-condition">Zodiac: ${zodiac}</div>
+          </div>
+        `;
+      })
         .catch((error) => {
           console.error('Error fetching moon data:', error);
           const moonPhaseWidget = document.getElementById('moon-phase-widget');
