@@ -90,45 +90,51 @@
     }
   
     // Fetch Weather Data
-    function fetchWeather() {
+    async function fetchWeather() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          (position) => {
+          async (position) => {
             const { latitude, longitude } = position.coords;
-            const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${weatherApiKey}&units=imperial`;
-  
-            fetch(weatherUrl)
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(`Weather API Error: ${response.status}`);
+    
+            try {
+              // Step 1: Get Place from Backend
+              const place = await fetchPlaceFromCoordinates(latitude, longitude);
+    
+              // Step 2: Fetch Weather Data from Backend
+              const weatherUrl = `https://weather-moon-api.onrender.com/api/weather?place=${encodeURIComponent(place)}`;
+              const weatherResponse = await fetch(weatherUrl);
+    
+              if (!weatherResponse.ok) {
+                throw new Error(`Weather API Error: ${weatherResponse.status}`);
               }
-              return response.json();
-            })
-              .then((data) => {
-                const weatherWidget = document.getElementById('weather-widget');
-                const location = data.name;
-                const temperature = data.main.temp;
-                const condition = data.weather[0].description;
-                const iconCode = data.weather[0].icon;
-  
-                weatherWidget.innerHTML = `
-                  <img
-                    src="https://openweathermap.org/img/wn/${iconCode}@2x.png"
-                    alt="${condition}"
-                    class="weather-icon"
-                  />
-                  <div class="weather-details">
-                    <div class="weather-location">${location}</div>
-                    <div class="weather-temp">${temperature.toFixed(0)}°F</div>
-                    <div class="weather-condition">${condition.charAt(0).toUpperCase() + condition.slice(1)}</div>
-                  </div>
-                `;
-              })
-              .catch((error) => {
-                console.error('Error fetching weather data:', error);
-                const weatherWidget = document.getElementById('weather-widget');
-                weatherWidget.innerText = 'Failed to load weather data.';
-              });
+    
+              const weatherData = await weatherResponse.json();
+    
+              // Step 3: Update the Weather Widget
+              const weatherWidget = document.getElementById('weather-widget');
+              const temperature = weatherData.current.temperature; 
+              const tempFahrenheit = ((weatherData.current.temperature - 273.15) * 9/5 + 32).toFixed(1);
+              const condition = weatherData.current.weather[0].description; 
+              const iconCode = weatherData.current.weather[0].icon; 
+              const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`; 
+    
+              weatherWidget.innerHTML = `
+                <img
+                  src="${iconUrl}"  <!-- Update to match your API's icon field -->
+                  alt="${condition}"
+                  class="weather-icon"
+                />
+                <div class="weather-details">
+                  <div class="weather-location">${place}</div>
+                  <div class="weather-temp">${tempFahrenheit}°F</div>
+                  <div class="weather-condition">${condition}</div>
+                </div>
+              `;
+            } catch (error) {
+              console.error('Error fetching weather data:', error);
+              const weatherWidget = document.getElementById('weather-widget');
+              weatherWidget.innerText = 'Failed to load weather data.';
+            }
           },
           (error) => {
             console.error('Error getting location:', error);
