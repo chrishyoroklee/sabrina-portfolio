@@ -142,10 +142,8 @@
             const { latitude, longitude } = position.coords;
     
             try {
-              // Step 1: Get Place from Backend
               const place = await fetchPlaceFromCoordinates(latitude, longitude);
-    
-              // Step 2: Fetch Weather Data from Backend
+      
               const weatherUrl = `https://weather-moon-api.onrender.com/api/weather?place=${encodeURIComponent(place)}`;
               const weatherResponse = await fetch(weatherUrl);
     
@@ -154,18 +152,16 @@
               }
     
               const weatherData = await weatherResponse.json();
-    
-              // Step 3: Update the Weather Widget
-              const weatherWidget = document.getElementById('weather-widget');
+              
               const temperature = weatherData.current.temperature; 
               const tempFahrenheit = ((weatherData.current.temperature - 273.15) * 9/5 + 32).toFixed(1);
               const condition = weatherData.current.weather[0].description; 
-              const iconCode = weatherData.current.weather[0].icon; 
-              const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`; 
-    
+              const iconUrl = weatherData.current.weather[0].icon;
+
+              const weatherWidget = document.getElementById('weather-widget');
               weatherWidget.innerHTML = `
                 <img
-                  src="${iconUrl}"  <!-- Update to match your API's icon field -->
+                  src="${iconUrl}" 
                   alt="${condition}"
                   class="weather-icon"
                 />
@@ -224,6 +220,27 @@
           moonPhaseWidget.innerText = 'Failed to load moon data.';
         });
     }
+
+    async function fetchPlaceFromCoordinates(latitude, longitude) {
+      const reverseGeocodeUrl = `${API_BASE_URL}/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
+      
+      try {
+        const response = await fetch(reverseGeocodeUrl);
+        if (!response.ok) {
+          throw new Error(`Reverse Geocoding API Error: ${response.status}`);
+        }
+    
+        const data = await response.json();
+        if (data.city && data.country) {
+          return `${data.city},${data.country}`; // Return the place in "City,Country" format
+        } else {
+          throw new Error("No valid city or country returned from reverse geocoding.");
+        }
+      } catch (error) {
+        console.error("Error fetching place from coordinates:", error);
+        throw error; // Re-throw the error to handle it in the calling function
+      }
+    }
   
     // Monitor for Dynamic DOM Changes
     const observer = new MutationObserver(() => {
@@ -237,24 +254,3 @@
       initializeWidgets();
     });
   })();
-
-  async function fetchPlaceFromCoordinates(latitude, longitude) {
-    const reverseGeocodeUrl = `${API_BASE_URL}/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
-    
-    try {
-      const response = await fetch(reverseGeocodeUrl);
-      if (!response.ok) {
-        throw new Error(`Reverse Geocoding API Error: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      if (data.city && data.country) {
-        return `${data.city},${data.country}`; // Return the place in "City,Country" format
-      } else {
-        throw new Error("No valid city or country returned from reverse geocoding.");
-      }
-    } catch (error) {
-      console.error("Error fetching place from coordinates:", error);
-      throw error; // Re-throw the error to handle it in the calling function
-    }
-  }
