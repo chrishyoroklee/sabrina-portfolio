@@ -206,11 +206,14 @@
         const emoji = data.moon.emoji;
 
         moonPhaseWidget.innerHTML = `
-          <div class="weather-icon">${emoji}</div>
-          <div class="weather-widget">
-            <div class="weather-location">Age days: ${ageDays}</div>
-            <div class="weather-temp">Phase: ${phaseName}</div>
-            <div class="weather-condition">Zodiac: ${zodiac}</div>
+          
+          <div class="moon-widget">
+            <div class="moon-info">
+              <div class="moon-age">Age days: ${ageDays}</div>
+              <div class="moon-phase">Phase: ${phaseName}</div>
+              <div class="moon-zodiac">Zodiac: ${zodiac}</div>
+            </div>
+            <div class="moon-icon">${emoji}</div>
           </div>
         `;
       })
