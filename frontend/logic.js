@@ -1,7 +1,8 @@
 (() => {
     // Configuration Variables
-    const weatherProxyUrl = 'https://weather-moon-api.onrender.com/api/weather';
-    const moonPhaseProxyUrl = 'https://weather-moon-api.onrender.com/api/moon-phase';
+    const API_BASE_URL = 'https://weather-moon-api.onrender.com';
+    const weatherProxyUrl = `${API_BASE_URL}/api/weather`;
+    const moonPhaseProxyUrl = `${API_BASE_URL}/api/moon-phase`;
     const urls = [
       'https://www.google.com',
       'https://www.youtube.com',
@@ -103,7 +104,7 @@
 
             // Step 2: Call Reverse Geocoding API
             try {
-              const reverseGeocodeUrl = `http://localhost:5001/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
+              const reverseGeocodeUrl = `${API_BASE_URL}/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
               const response = await fetch(reverseGeocodeUrl);
 
               if (!response.ok) {
@@ -236,3 +237,24 @@
       initializeWidgets();
     });
   })();
+
+  async function fetchPlaceFromCoordinates(latitude, longitude) {
+    const reverseGeocodeUrl = `${API_BASE_URL}/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
+    
+    try {
+      const response = await fetch(reverseGeocodeUrl);
+      if (!response.ok) {
+        throw new Error(`Reverse Geocoding API Error: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      if (data.city && data.country) {
+        return `${data.city},${data.country}`; // Return the place in "City,Country" format
+      } else {
+        throw new Error("No valid city or country returned from reverse geocoding.");
+      }
+    } catch (error) {
+      console.error("Error fetching place from coordinates:", error);
+      throw error; // Re-throw the error to handle it in the calling function
+    }
+  }
