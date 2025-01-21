@@ -88,7 +88,51 @@
         }
       });
     }
-  
+    // Debug Geolocation and Reverse Geocoding
+    async function testGeolocationAndReverseGeocoding() {
+      const debugLocation = document.getElementById("debug-location").querySelector("span");
+      const debugPlace = document.getElementById("debug-place").querySelector("span");
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+
+            // Step 1: Display Geolocation
+            debugLocation.textContent = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`;
+
+            // Step 2: Call Reverse Geocoding API
+            try {
+              const reverseGeocodeUrl = `http://localhost:5001/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
+              const response = await fetch(reverseGeocodeUrl);
+
+              if (!response.ok) {
+                throw new Error(`Reverse Geocoding API Error: ${response.status}`);
+              }
+
+              const data = await response.json();
+
+              if (data.city && data.country) {
+                debugPlace.textContent = `${data.city}, ${data.country}`;
+              } else {
+                debugPlace.textContent = "Reverse geocoding failed: No valid city or country returned.";
+              }
+            } catch (error) {
+              console.error("Error fetching reverse geocoding data:", error);
+              debugPlace.textContent = `Error: ${error.message}`;
+            }
+          },
+          (error) => {
+            console.error("Error fetching geolocation:", error);
+            debugLocation.textContent = `Error: ${error.message}`;
+            debugPlace.textContent = "Reverse geocoding skipped due to geolocation error.";
+          }
+        );
+      } else {
+        debugLocation.textContent = "Geolocation is not supported by this browser.";
+        debugPlace.textContent = "Reverse geocoding skipped.";
+      }
+    }
     // Fetch Weather Data
     async function fetchWeather() {
       if (navigator.geolocation) {
