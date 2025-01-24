@@ -31,7 +31,7 @@
   
       // Guestbook Popup Logic
       const guestbookButton = document.getElementById('guestbook');
-      const brevoFormContainer = document.getElementById('.sib-form');
+      const brevoFormContainer = document.getElementById('brevo-form');
       const overlay = document.getElementById('popup-overlay');
       const closeButton = document.getElementById('close-popup');
   
