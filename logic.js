@@ -206,11 +206,9 @@
           
           <div class="moon-widget">
             <div class="moon-info">
-              <div class="moon-age">Age days: ${ageDays}</div>
-              <div class="moon-phase">Phase: ${phaseName}</div>
+              <div class="moon-phase">${phaseName}</div>
               <div class="moon-zodiac">Zodiac: ${zodiac}</div>
             </div>
-            <div class="moon-icon">${emoji}</div>
           </div>
         `;
       })
