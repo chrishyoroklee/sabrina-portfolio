@@ -31,21 +31,28 @@
   
       // Guestbook Popup Logic
       const guestbookButton = document.getElementById('guestbook');
-      const popup = document.getElementById('newsletter-popup');
+      const brevoFormContainer = document.getElementById('.sib-form');
       const overlay = document.getElementById('popup-overlay');
       const closeButton = document.getElementById('close-popup');
   
       if (guestbookButton && !initializedElements.has(guestbookButton)) {
         initializedElements.add(guestbookButton);
         guestbookButton.addEventListener('click', () => {
-          popup.style.display = 'block';
-          overlay.style.display = 'block';
+          if (brevoFormContainer){
+            brevoFormContainer.style.display = 'block';
+            if (overlay) overlay.style.display = 'block';
+          }
+
         });
-  
-        closeButton.addEventListener('click', () => {
-          popup.style.display = 'none';
-          overlay.style.display = 'none';
-        });
+        if (closeButton){
+          closeButton.addEventListener('click', () => {
+            if (brevoFormContainer) {
+              brevoFormContainer.style.display = 'none';
+              if (overlay) overlay.style.display = 'none';
+            }
+          });
+        }
+
       }
   
       // Odyssey Hyperlink Logic
