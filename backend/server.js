@@ -65,7 +65,7 @@ app.get('/api/weather', async (req, res) => {
     const data = await response.json();
     res.json({
       location: data.name,
-      temperature: data.main.temp,
+      temperature: Math.round(data.main.temp),
       condition: data.weather[0].description,
       icon: `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
     });
