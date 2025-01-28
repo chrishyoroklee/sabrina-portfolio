@@ -281,11 +281,52 @@
         throw error; // Re-throw the error to handle it in the calling function
       }
     }
+
+    //Bloghandy logic
+    function initializeBlogHandy() {
+      // BlogHandy ID
+      const bhId = "609Fe4CuPO0LIrNTA3Nw";
+      console.log("Initializing BlogHandy with ID:", bhId);
+    
+      // Check if BlogHandy script is already loaded
+      if (!document.querySelector('script[src="https://www.bloghandy.com/api/bh_blogengine.js"]')) {
+        // Dynamically create and load BlogHandy script
+        const script = document.createElement('script');
+        script.src = "https://www.bloghandy.com/api/bh_blogengine.js";
+        script.async = true;
+    
+        script.onload = () => {
+          console.log("BlogHandy script loaded successfully.");
+          // Dynamically add #bh-posts container content after loading
+          const bhPostsContainer = document.getElementById('bh-posts');
+          if (bhPostsContainer) {
+            console.log("BlogHandy posts container found.");
+            
+            bhPostsContainer.innerHTML = `
+              <div style="text-align: center; font-size: 14px; color: gray;">
+                Loading essays...
+              </div>
+            `;
+          } else {
+            console.warn("#bh-posts container not found in the DOM.");
+          }
+        };
+    
+        script.onerror = () => {
+          console.error("Failed to load BlogHandy script.");
+        };
+    
+        document.head.appendChild(script); 
+      } else {
+        console.log("BlogHandy script already loaded.");
+      }
+    }
   
     // Monitor for Dynamic DOM Changes
     const observer = new MutationObserver(() => {
       initializeWidgets();
       initializePostItNote();
+      initializeBlogHandy();
     });
   
     observer.observe(document.body, { childList: true, subtree: true });
@@ -293,5 +334,6 @@
     // Initialize Widgets on Initial Load
     document.addEventListener('DOMContentLoaded', () => {
       initializeWidgets();
+      initializeBlogHandy();
     });
   })();
