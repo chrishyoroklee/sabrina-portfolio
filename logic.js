@@ -144,58 +144,41 @@
       }
     }
     // Fetch Weather Data
-    async function fetchWeather() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const { latitude, longitude } = position.coords;
-    
-            try {
-              const place = await fetchPlaceFromCoordinates(latitude, longitude);
-      
-              const weatherUrl = `https://weather-moon-api.onrender.com/api/weather?place=${encodeURIComponent(place)}`;
-              const weatherResponse = await fetch(weatherUrl);
-    
-              if (!weatherResponse.ok) {
-                throw new Error(`Weather API Error: ${weatherResponse.status}`);
-              }
-    
-              const weatherData = await weatherResponse.json();
-              
-              const temperature = weatherData.current.temperature; 
-              const tempFahrenheit = ((weatherData.current.temperature - 273.15) * 9/5 + 32).toFixed(1);
-              const condition = weatherData.current.weather[0].description; 
-              const iconUrl = weatherData.current.weather[0].icon;
-
-              const weatherWidget = document.getElementById('weather-widget');
-              weatherWidget.innerHTML = `
-                <img
-                  src="${iconUrl}" 
-                  alt="${condition}"
-                  class="weather-icon"
-                />
-                <div class="weather-details">
-                  <div class="weather-location">${place}</div>
-                  <div class="weather-temp">${tempFahrenheit}°F</div>
-                  <div class="weather-condition">${condition}</div>
-                </div>
-              `;
-            } catch (error) {
-              console.error('Error fetching weather data:', error);
-              const weatherWidget = document.getElementById('weather-widget');
-              weatherWidget.innerText = 'Failed to load weather data.';
-            }
-          },
-          (error) => {
-            console.error('Error getting location:', error);
-            const weatherWidget = document.getElementById('weather-widget');
-            weatherWidget.innerText = 'Location access denied.';
+    function fetchWeather() {
+      fetch(weatherProxyUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Weather API Error: ${response.status}`);
           }
-        );
-      } else {
-        const weatherWidget = document.getElementById('weather-widget');
-        weatherWidget.innerText = 'Geolocation is not supported by this browser.';
-      }
+          return response.json();
+        })
+        .then((data) => {
+          const weatherWidget = document.getElementById('weather-widget');
+          const location = data.location;
+          const temperature = data.temperature;
+          const condition = data.condition; 
+          const icon = data.icon; 
+    
+          weatherWidget.innerHTML = `
+            <div class="weather-widget">
+              <img
+                src="${icon}" 
+                alt="${condition}" 
+                class="weather-icon"
+              />
+              <div class="weather-details">
+                <div class="weather-location">${location}</div>
+                <div class="weather-temp">${temperature}°F</div>
+                <div class="weather-condition">${condition}</div>
+              </div>
+            </div>
+          `;
+        })
+        .catch((error) => {
+          console.error('Error fetching weather data:', error);
+          const weatherWidget = document.getElementById('weather-widget');
+          weatherWidget.innerText = 'Failed to load weather data.';
+        });
     }
 
     function initializePostItNote() {
