@@ -198,29 +198,29 @@
       }
     }
 
-    function initializePostItNote() {
-      const trigger = document.getElementById('note-trigger'); // The trigger for the Post-it Note
-      const note = document.querySelector('.nostalgic-note'); // The Post-it Note container
+    // function initializePostItNote() {
+    //   const trigger = document.getElementById('note-trigger'); // The trigger for the Post-it Note
+    //   const note = document.querySelector('.nostalgic-note'); // The Post-it Note container
     
-      // Ensure both elements exist before adding logic
-      if (trigger && note && !trigger.dataset.initialized) {
-        trigger.dataset.initialized = 'true'; // Mark trigger as initialized to prevent duplicate listeners
+    //   // Ensure both elements exist before adding logic
+    //   if (trigger && note && !trigger.dataset.initialized) {
+    //     trigger.dataset.initialized = 'true'; // Mark trigger as initialized to prevent duplicate listeners
     
-        trigger.addEventListener('click', () => {
-          const currentDisplay = window.getComputedStyle(note).display;
+    //     trigger.addEventListener('click', () => {
+    //       const currentDisplay = window.getComputedStyle(note).display;
     
-          if (currentDisplay === 'none') {
-            note.style.display = 'flex'; // Show the note
-          } else {
-            note.style.display = 'none'; // Hide the note
-          }
-        });
+    //       if (currentDisplay === 'none') {
+    //         note.style.display = 'flex'; // Show the note
+    //       } else {
+    //         note.style.display = 'none'; // Hide the note
+    //       }
+    //     });
     
-        console.log('Post-it Note initialized successfully.');
-      } else if (!trigger || !note) {
-        console.warn('Post-it Note trigger or container not found.');
-      }
-    }
+    //     console.log('Post-it Note initialized successfully.');
+    //   } else if (!trigger || !note) {
+    //     console.warn('Post-it Note trigger or container not found.');
+    //   }
+    // }
     // Fetch Moon Phase Data
     function fetchMoonPhase() {
       fetch(moonPhaseProxyUrl)
@@ -325,7 +325,6 @@
     // Monitor for Dynamic DOM Changes
     const observer = new MutationObserver(() => {
       initializeWidgets();
-      initializePostItNote();
       initializeBlogHandy();
     });
   
