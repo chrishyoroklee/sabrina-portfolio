@@ -203,9 +203,11 @@
       const note = document.querySelector('.nostalgic-note'); // The Post-it Note container
     
       // Ensure both elements exist before adding logic
-      if (trigger && note) {
+      if (trigger && note && !trigger.dataset.initialized) {
+        trigger.dataset.initialized = 'true'; // Mark trigger as initialized to prevent duplicate listeners
+    
         trigger.addEventListener('click', () => {
-          const currentDisplay = window.getComputedStyle(note).display; 
+          const currentDisplay = window.getComputedStyle(note).display;
     
           if (currentDisplay === 'none') {
             note.style.display = 'flex'; // Show the note
@@ -215,7 +217,7 @@
         });
     
         console.log('Post-it Note initialized successfully.');
-      } else {
+      } else if (!trigger || !note) {
         console.warn('Post-it Note trigger or container not found.');
       }
     }
@@ -283,6 +285,7 @@
     // Monitor for Dynamic DOM Changes
     const observer = new MutationObserver(() => {
       initializeWidgets();
+      initializePostItNote();
     });
   
     observer.observe(document.body, { childList: true, subtree: true });
