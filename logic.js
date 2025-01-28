@@ -95,6 +95,23 @@
         }
       });
     }
+    //Post-it Note Logic
+    function initializePostItNote() {
+      const trigger = document.getElementById('note-trigger'); 
+      const note = document.querySelector('.nostalgic-note'); // Post-it Note container
+
+      if (trigger && note) {
+        trigger.addEventListener('click', () => {
+
+          if (note.style.display === 'none' || note.style.display === '') {
+            note.style.display = 'flex';
+          } else {
+            note.style.display = 'none'; 
+          }
+        });
+      }
+    }
+
     // Debug Geolocation and Reverse Geocoding
     async function testGeolocationAndReverseGeocoding() {
       const debugLocation = document.getElementById("debug-location").querySelector("span");
