@@ -145,40 +145,58 @@
     }
     // Fetch Weather Data
     function fetchWeather() {
-      fetch(weatherProxyUrl)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Weather API Error: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          const weatherWidget = document.getElementById('weather-widget');
-          const location = data.location;
-          const temperature = data.temperature;
-          const condition = data.condition; 
-          const icon = data.icon; 
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
     
-          weatherWidget.innerHTML = `
-            <div class="weather-widget">
-              <img
-                src="${icon}" 
-                alt="${condition}" 
-                class="weather-icon"
-              />
-              <div class="weather-details">
-                <div class="weather-location">${location}</div>
-                <div class="weather-temp">${temperature}°F</div>
-                <div class="weather-condition">${condition}</div>
-              </div>
-            </div>
-          `;
-        })
-        .catch((error) => {
-          console.error('Error fetching weather data:', error);
-          const weatherWidget = document.getElementById('weather-widget');
-          weatherWidget.innerText = 'Failed to load weather data.';
-        });
+            // Construct the weather proxy URL with query parameters
+            const urlWithParams = `${weatherProxyUrl}?lat=${latitude}&lon=${longitude}`;
+            console.log("Fetching weather data from:", urlWithParams);
+    
+            try {
+              const response = await fetch(urlWithParams);
+    
+              if (!response.ok) {
+                throw new Error(`Weather API Error: ${response.status}`);
+              }
+    
+              const data = await response.json();
+              console.log("Weather data received:", data);
+    
+              const weatherWidget = document.getElementById("weather-widget");
+              const location = data.location;
+              const temperature = data.temperature;
+              const condition = data.condition;
+              const icon = data.icon;
+    
+              weatherWidget.innerHTML = `
+                <div class="weather-widget">
+                  <img src="${icon}" alt="${condition}" class="weather-icon" />
+                  <div class="weather-details">
+                    <div class="weather-location">${location}</div>
+                    <div class="weather-temp">${temperature}°F</div>
+                    <div class="weather-condition">${condition}</div>
+                  </div>
+                </div>
+              `;
+            } catch (error) {
+              console.error("Error fetching weather data:", error);
+              const weatherWidget = document.getElementById("weather-widget");
+              weatherWidget.innerText = "Failed to load weather data.";
+            }
+          },
+          (error) => {
+            console.error("Error fetching geolocation:", error.message);
+            const weatherWidget = document.getElementById("weather-widget");
+            weatherWidget.innerText = "Failed to get geolocation.";
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+        const weatherWidget = document.getElementById("weather-widget");
+        weatherWidget.innerText = "Geolocation is not supported by this browser.";
+      }
     }
 
     function initializePostItNote() {
