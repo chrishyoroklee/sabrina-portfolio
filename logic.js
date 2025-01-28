@@ -96,19 +96,7 @@
       });
 
       //Post-it Note Logic
-      const trigger = document.getElementById('note-trigger'); 
-      const note = document.querySelector('.nostalgic-note'); // Post-it Note container
-
-      if (trigger && note) {
-        trigger.addEventListener('click', () => {
-
-          if (note.style.display === 'none' || note.style.display === '') {
-            note.style.display = 'flex';
-          } else {
-            note.style.display = 'none'; 
-          }
-        });
-      }
+      initializePostItNote();
     }
 
 
@@ -209,7 +197,28 @@
         weatherWidget.innerText = 'Geolocation is not supported by this browser.';
       }
     }
-  
+
+    function initializePostItNote() {
+      const trigger = document.getElementById('note-trigger'); // The trigger for the Post-it Note
+      const note = document.querySelector('.nostalgic-note'); // The Post-it Note container
+    
+      // Ensure both elements exist before adding logic
+      if (trigger && note) {
+        trigger.addEventListener('click', () => {
+          const currentDisplay = window.getComputedStyle(note).display; 
+    
+          if (currentDisplay === 'none') {
+            note.style.display = 'flex'; // Show the note
+          } else {
+            note.style.display = 'none'; // Hide the note
+          }
+        });
+    
+        console.log('Post-it Note initialized successfully.');
+      } else {
+        console.warn('Post-it Note trigger or container not found.');
+      }
+    }
     // Fetch Moon Phase Data
     function fetchMoonPhase() {
       fetch(moonPhaseProxyUrl)
