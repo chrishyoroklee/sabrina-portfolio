@@ -99,7 +99,6 @@
       initializePostItNote();
     }
 
-
     // Debug Geolocation and Reverse Geocoding
     async function testGeolocationAndReverseGeocoding() {
       const debugLocation = document.getElementById("debug-location").querySelector("span");
